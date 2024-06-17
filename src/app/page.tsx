@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Footer from './footer';
-import Test from './test';
+import Link from 'next/link';
 
 interface Chapter {
   chapter: number;
@@ -73,21 +73,18 @@ export default function Home() {
     },
   ]);
   const [startTime, setStartTime] = useState<number | null>(null);
-  const [showTest, setShowTest] = useState<boolean>(false);
 
   const openPreview = (link: string) => {
     if (link) {
       setEmbedLink(link);
       setStartTime(Date.now());
-    } else {
-      setShowTest(true);
     }
   };
 
   const closePreview = () => {
     if (embedLink && startTime) {
       const elapsedTime = (Date.now() - startTime) / 1000; // time in seconds
-      if (elapsedTime >= 1) { // minimum time threshold (e.g., 30 seconds)
+      if (elapsedTime >= 30) { // minimum time threshold (e.g., 30 seconds)
         setSections((prevSections) =>
           prevSections.map((section) => ({
             ...section,
@@ -100,10 +97,6 @@ export default function Home() {
     }
     setEmbedLink(null);
     setStartTime(null);
-  };
-
-  const closeTest = () => {
-    setShowTest(false);
   };
 
   useEffect(() => {
@@ -123,18 +116,6 @@ export default function Home() {
       })
     );
   }, [sections]);
-
-  const handleTestCompletion = () => {
-    setShowTest(false);
-    setSections((prevSections) =>
-      prevSections.map((section) => ({
-        ...section,
-        chapters: section.chapters.map((chapter) =>
-          chapter.isPreTest ? { ...chapter, viewed: true } : chapter
-        ),
-      }))
-    );
-  };
 
   return (
     <>
@@ -161,11 +142,14 @@ export default function Home() {
                     {section.chapters.map((chapter, chapterIdx) => (
                       <tr key={chapterIdx} className="border-t">
                         <td className="py-2 px-4">{chapter.chapter}</td>
-                        <td
-                          className="py-2 px-4 cursor-pointer text-blue-500"
-                          onClick={() => openPreview(chapter.link)}
-                        >
-                          {chapter.name}
+                        <td className="py-2 px-4 cursor-pointer text-blue-500">
+                          {chapter.isPreTest ? (
+                            <Link href="/test" legacyBehavior>
+                              <a>{chapter.name}</a>
+                            </Link>
+                          ) : (
+                            <span onClick={() => openPreview(chapter.link)}>{chapter.name}</span>
+                          )}
                         </td>
                         <td className="py-2 px-4 text-center">
                           {chapter.viewed ? '✔' : '✕'}
@@ -198,25 +182,6 @@ export default function Home() {
                   className="w-full h-[70vh]"
                   allowFullScreen
                 ></iframe>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {showTest && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg relative w-[90%] md:w-[70%]">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h2 className="text-xl font-semibold">Pre-Test</h2>
-                <button
-                  onClick={closeTest}
-                  className="text-gray-600 hover:text-gray-800"
-                >
-                  ✕
-                </button>
-              </div>
-              <div className="p-4">
-                <Test onComplete={handleTestCompletion} />
               </div>
             </div>
           </div>
