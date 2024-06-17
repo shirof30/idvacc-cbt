@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Question {
@@ -9,18 +11,18 @@ interface Question {
 
 const questions: Question[] = [
   { question: 'What is 2 + 2?', choices: ['3', '4', '5', '6'], answer: '4' },
-  { question: 'What is the capital of France?', choices: ['Paris', 'London', 'Berlin', 'Madrid'], answer: 'Paris' },
-  { question: 'What is the primary function of an altimeter?', choices: ['Measure airspeed', 'Measure altitude', 'Measure temperature', 'Measure wind speed'], answer: 'Measure altitude' },
-  { question: 'What does ATC stand for?', choices: ['Air Traffic Control', 'Aviation Technical Committee', 'Air Traffic Communication', 'Aerial Traffic Command'], answer: 'Air Traffic Control' },
-  { question: 'What is the term for the speed at which an aircraft can safely take off?', choices: ['V1', 'V2', 'Vr', 'Vs'], answer: 'Vr' },
   { question: 'What is a "mayday" call?', choices: ['Routine check-in', 'Emergency distress signal', 'Weather report', 'Altitude request'], answer: 'Emergency distress signal' },
-  { question: 'What instrument is used to measure the angle of attack?', choices: ['Airspeed Indicator', 'Altimeter', 'Attitude Indicator', 'AOA Indicator'], answer: 'AOA Indicator' },
+  { question: 'What is the capital of France?', choices: ['Paris', 'London', 'Berlin', 'Madrid'], answer: 'Paris' },
   { question: 'Which phase of flight is considered the most critical for potential accidents?', choices: ['Cruise', 'Takeoff and landing', 'Taxiing', 'Holding'], answer: 'Takeoff and landing' },
+  { question: 'What is the primary function of an altimeter?', choices: ['Measure airspeed', 'Measure altitude', 'Measure temperature', 'Measure wind speed'], answer: 'Measure altitude' },
   { question: 'What does the "black box" in an aircraft record?', choices: ['Passenger conversations', 'Flight data and cockpit voice recordings', 'Weather conditions', 'Fuel levels'], answer: 'Flight data and cockpit voice recordings' },
-  { question: 'What is the purpose of a NOTAM?', choices: ['Weather forecast', 'Navigation update', 'Safety information', 'Regulatory changes'], answer: 'Regulatory changes' },
+  { question: 'What does ATC stand for?', choices: ['Air Traffic Control', 'Aviation Technical Committee', 'Air Traffic Communication', 'Aerial Traffic Command'], answer: 'Air Traffic Control' },
+  { question: 'What instrument is used to measure the angle of attack?', choices: ['Airspeed Indicator', 'Altimeter', 'Attitude Indicator', 'AOA Indicator'], answer: 'AOA Indicator' },
+  { question: 'What is the purpose of a NOTAM?', choices: ['Weather forecast', 'Navigation update', 'Safety information', 'Regulatory changes'], answer: 'Safety information' },
+  { question: 'What is the term for the speed at which an aircraft can safely take off?', choices: ['V1', 'V2', 'Vr', 'Vs'], answer: 'Vr' },
 ];
 
-const shuffleArray = (array: any[]): any[] => {
+const shuffleArray = (array: any[]) => {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -28,49 +30,53 @@ const shuffleArray = (array: any[]): any[] => {
   return array;
 };
 
-export default function Test() {
+const Test = () => {
+  const router = useRouter();
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<string[]>([]);
+  const [selectedAnswers, setSelectedAnswers] = useState<string[]>(Array(10).fill(''));
   const [isTestCompleted, setIsTestCompleted] = useState(false);
+  const [uniqueCode, setUniqueCode] = useState<string | null>(null);
   const [randomQuestions, setRandomQuestions] = useState<Question[]>([]);
-  const [uniqueCode, setUniqueCode] = useState<string>('');
 
   useEffect(() => {
     setRandomQuestions(shuffleArray([...questions]).slice(0, 10));
   }, []);
 
   const handleAnswer = (choice: string, index: number) => {
-    setSelectedAnswers((prev) => {
-      const newAnswers = [...prev];
-      newAnswers[index] = choice;
-      return newAnswers;
-    });
-  };
+    const newAnswers = [...selectedAnswers];
+    newAnswers[index] = choice;
+    setSelectedAnswers(newAnswers);
 
-  const handleSubmit = async () => {
-    let newScore = 0;
-    selectedAnswers.forEach((answer, index) => {
-      if (answer === randomQuestions[index].answer) {
-        newScore++;
-      }
-    });
-    setScore(newScore);
-    setIsTestCompleted(true);
-
-    if (newScore >= 8) {
-      const code = uuidv4();
-      setUniqueCode(code);
-
-      // Store the code on the server
-      await fetch('/api/store-code', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ code }),
-      });
+    if (choice === randomQuestions[currentQuestionIndex].answer) {
+      setScore((prev) => prev + 1);
+    } else if (selectedAnswers[currentQuestionIndex] === randomQuestions[currentQuestionIndex].answer) {
+      setScore((prev) => prev - 1);
     }
   };
+
+  const handleSubmit = () => {
+    const code = uuidv4();
+    setUniqueCode(code);
+    setIsTestCompleted(true);
+    axios.post('/api/store-code', { code });
+  };
+
+  const goToNextQuestion = () => {
+    if (currentQuestionIndex + 1 < randomQuestions.length) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+    }
+  };
+
+  const goToPreviousQuestion = () => {
+    if (currentQuestionIndex > 0) {
+      setCurrentQuestionIndex((prev) => prev - 1);
+    }
+  };
+
+  if (randomQuestions.length === 0) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
@@ -78,39 +84,61 @@ export default function Test() {
         <h1 className="text-3xl justify-center font-bold mb-4">Pre-Test</h1>
         {!isTestCompleted ? (
           <div>
-            {randomQuestions.map((question, index) => (
-              <div key={index} className="mb-6">
-                <h2 className="text-2xl mb-4">{question.question}</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  {question.choices.map((choice, choiceIndex) => (
-                    <button
-                      key={choiceIndex}
-                      className={`p-3 rounded border ${selectedAnswers[index] === choice ? 'bg-blue-600 text-white' : 'bg-gray-200 text-black'} hover:bg-blue-500 hover:text-white`}
-                      onClick={() => handleAnswer(choice, index)}
-                    >
-                      {choice}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <button
-              className="p-3 bg-green-600 text-white rounded mt-6 hover:bg-green-700"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
+            <h2 className="text-xl font-semibold mb-4">
+              {`Question ${currentQuestionIndex + 1} / ${randomQuestions.length}`}
+            </h2>
+            <h2 className="text-xl font-semibold mb-4">
+              {randomQuestions[currentQuestionIndex].question}
+            </h2>
+            <div className="flex flex-col">
+              {randomQuestions[currentQuestionIndex].choices.map((choice, index) => (
+                <button
+                  key={index}
+                  className={`p-2 mb-2 rounded ${selectedAnswers[currentQuestionIndex] === choice ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+                  onClick={() => handleAnswer(choice, currentQuestionIndex)}
+                >
+                  {choice}
+                </button>
+              ))}
+            </div>
+            <div className="flex justify-between mt-4">
+              <button
+                className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                onClick={goToPreviousQuestion}
+                disabled={currentQuestionIndex === 0}
+              >
+                Previous
+              </button>
+              {currentQuestionIndex + 1 === randomQuestions.length ? (
+                <button
+                  className="p-2 bg-green-500 text-white rounded hover:bg-green-700"
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+              ) : (
+                <button
+                  className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                  onClick={goToNextQuestion}
+                >
+                  Next
+                </button>
+              )}
+            </div>
           </div>
         ) : (
           <div>
-            <h2 className="text-2xl font-semibold mb-4">
+            <h2 className="text-xl font-semibold mb-4">
               Test Completed! Your Score: {score} / {randomQuestions.length}
             </h2>
             {score >= 8 ? (
               <div>
-                <p className="text-green-500 mb-4">Congratulations! You passed the test.</p>
-                <p>You may now apply to become ATC at IDVACC. Please include a screenshot of this page with the code below:</p>
-                <p className="font-bold text-lg">{uniqueCode}</p>
+                <p className="text-green-600 mb-4">Congratulations! You passed the test.</p>
+                <p className="mb-4">
+                  You may now apply to become ATC at IDVACC. Please include the code below when applying:
+                </p>
+                <p className="bg-blue-100 p-2 rounded">{uniqueCode}</p>
+                
               </div>
             ) : (
               <p className="text-red-500">You need at least 8 correct answers to pass.</p>
@@ -120,4 +148,6 @@ export default function Test() {
       </div>
     </div>
   );
-}
+};
+
+export default Test;

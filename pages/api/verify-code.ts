@@ -1,15 +1,27 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-
-const codes: { [key: string]: string } = {}; // Same object used in `store-code.ts`
+import type { NextApiRequest, NextApiResponse } from 'next';
+import fs from 'fs';
+import path from 'path';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { code } = req.query;
+  if (req.method === 'POST') {
+    const { code } = req.body;
+    const filePath = path.join(process.cwd(), 'generatedCodes.txt');
 
-  if (!code || Array.isArray(code)) {
-    return res.status(400).json({ error: 'Invalid code' });
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        console.error('Error reading file', err);
+        return res.status(500).json({ success: false, message: 'Internal Server Error' });
+      }
+
+      const codes = data.split('\n').filter(Boolean); // Split and filter out empty lines
+      if (codes.includes(code)) {
+        res.status(200).json({ success: true, message: 'Valid Code' });
+      } else {
+        res.status(400).json({ success: false, message: 'Invalid Code' });
+      }
+    });
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-
-  const isValid = !!codes[code];
-
-  return res.status(200).json({ valid: isValid });
 }

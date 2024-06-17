@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-export default function VerifyCode() {
+const VerifyCode = () => {
   const [code, setCode] = useState('');
-  const [verificationResult, setVerificationResult] = useState<string | null>(null);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
   const handleVerify = async () => {
-    const response = await fetch(`/api/verify-code?code=${code}`);
-    const result = await response.json();
-    setVerificationResult(result.valid ? 'Valid Code' : 'Invalid Code');
+    try {
+      const response = await axios.post('/api/verify-code', { code });
+      setIsValid(response.data.success);
+    } catch (error) {
+      console.error('Error verifying code:', error);
+      setIsValid(false);
+    }
   };
 
   return (
@@ -18,19 +23,23 @@ export default function VerifyCode() {
           type="text"
           value={code}
           onChange={(e) => setCode(e.target.value)}
-          className="p-2 border rounded w-full mb-4"
-          placeholder="Enter code"
+          className="w-full p-2 mb-4 border rounded"
+          placeholder="Enter your code"
         />
         <button
           onClick={handleVerify}
-          className="p-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+          className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700"
         >
           Verify
         </button>
-        {verificationResult && (
-          <p className="mt-4 font-bold">{verificationResult}</p>
+        {isValid !== null && (
+          <p className={`mt-4 ${isValid ? 'text-green-500' : 'text-red-500'}`}>
+            {isValid ? 'Valid Code' : 'Invalid Code'}
+          </p>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default VerifyCode;
