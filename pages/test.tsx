@@ -32,6 +32,9 @@ const shuffleArray = (array: any[]) => {
 
 const Test = () => {
   const router = useRouter();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [name, setName] = useState('');
+  const [idNumber, setIdNumber] = useState('');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<string[]>(Array(10).fill(''));
@@ -43,15 +46,27 @@ const Test = () => {
     setRandomQuestions(shuffleArray([...questions]).slice(0, 10));
   }, []);
 
+  const handleStartTest = () => {
+    if (name && idNumber) {
+      setCurrentStep(1);
+    } else {
+      alert("Please enter your name and ID number.");
+    }
+  };
+
   const handleAnswer = (choice: string, index: number) => {
     const newAnswers = [...selectedAnswers];
     newAnswers[index] = choice;
     setSelectedAnswers(newAnswers);
-
+    
     if (choice === randomQuestions[currentQuestionIndex].answer) {
-      setScore((prev) => prev + 1);
-    } else if (selectedAnswers[currentQuestionIndex] === randomQuestions[currentQuestionIndex].answer) {
-      setScore((prev) => prev - 1);
+      if (selectedAnswers[currentQuestionIndex] !== randomQuestions[currentQuestionIndex].answer) {
+        setScore((prev) => prev + 1);
+      }
+    } else {
+      if (selectedAnswers[currentQuestionIndex] === randomQuestions[currentQuestionIndex].answer) {
+        setScore((prev) => prev - 1);
+      }
     }
   };
 
@@ -59,7 +74,7 @@ const Test = () => {
     const code = uuidv4();
     setUniqueCode(code);
     setIsTestCompleted(true);
-    axios.post('/api/store-code', { code });
+    axios.post('/api/store-code', { code, name, idNumber });
   };
 
   const goToNextQuestion = () => {
@@ -81,69 +96,101 @@ const Test = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-3xl justify-center font-bold mb-4">Pre-Test</h1>
-        {!isTestCompleted ? (
+        <h1 className="text-3xl justify-center font-bold mb-4">IDVACC ATC Initial test</h1>
+        {currentStep === 0 ? (
           <div>
-            <h2 className="text-xl font-semibold mb-4">
-              {`Question ${currentQuestionIndex + 1} / ${randomQuestions.length}`}
-            </h2>
-            <h2 className="text-xl font-semibold mb-4">
-              {randomQuestions[currentQuestionIndex].question}
-            </h2>
-            <div className="flex flex-col">
-              {randomQuestions[currentQuestionIndex].choices.map((choice, index) => (
-                <button
-                  key={index}
-                  className={`p-2 mb-2 rounded ${selectedAnswers[currentQuestionIndex] === choice ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
-                  onClick={() => handleAnswer(choice, currentQuestionIndex)}
-                >
-                  {choice}
-                </button>
-              ))}
-            </div>
-            <div className="flex justify-between mt-4">
-              <button
-                className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
-                onClick={goToPreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-              >
-                Previous
-              </button>
-              {currentQuestionIndex + 1 === randomQuestions.length ? (
-                <button
-                  className="p-2 bg-green-500 text-white rounded hover:bg-green-700"
-                  onClick={handleSubmit}
-                >
-                  Submit
-                </button>
-              ) : (
-                <button
-                  className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                  onClick={goToNextQuestion}
-                >
-                  Next
-                </button>
-              )}
-            </div>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+              placeholder="Enter your name"
+            />
+            <input
+              type="text"
+              value={idNumber}
+              onChange={(e) => setIdNumber(e.target.value)}
+              className="w-full p-2 mb-4 border rounded"
+              placeholder="VATSIM ID number"
+            />
+            <button
+              onClick={handleStartTest}
+              className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Start Test
+            </button>
           </div>
         ) : (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">
-              Test Completed! Your Score: {score} / {randomQuestions.length}
-            </h2>
-            {score >= 8 ? (
+          <>
+            {!isTestCompleted ? (
               <div>
-                <p className="text-green-600 mb-4">Congratulations! You passed the test.</p>
-                <p className="mb-4">
-                  You may now apply to become ATC at IDVACC. Please include the code below when applying:
-                </p>
-                <p className="bg-blue-100 p-2 rounded">{uniqueCode}</p>
-                
+                <h2 className="text-xl font-semibold mb-4">
+                  {`Question ${currentQuestionIndex + 1} / ${randomQuestions.length}`}
+                </h2>
+                <h2 className="text-xl font-semibold mb-4">
+                  {randomQuestions[currentQuestionIndex].question}
+                </h2>
+                <div className="flex flex-col">
+                  {randomQuestions[currentQuestionIndex].choices.map((choice, index) => (
+                    <button
+                      key={index}
+                      className={`p-2 mb-2 rounded ${selectedAnswers[currentQuestionIndex] === choice ? 'bg-blue-700 text-white' : 'bg-blue-500 text-white hover:bg-blue-700'}`}
+                      onClick={() => handleAnswer(choice, currentQuestionIndex)}
+                    >
+                      {choice}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-4">
+                  <button
+                    className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                    onClick={goToPreviousQuestion}
+                    disabled={currentQuestionIndex === 0}
+                  >
+                    Previous
+                  </button>
+                  {currentQuestionIndex + 1 === randomQuestions.length ? (
+                    <button
+                      className="p-2 bg-green-500 text-white rounded hover:bg-green-700"
+                      onClick={handleSubmit}
+                    >
+                      Submit
+                    </button>
+                  ) : (
+                    <button
+                      className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                      onClick={goToNextQuestion}
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
               </div>
             ) : (
-              <p className="text-red-500">You need at least 8 correct answers to pass.</p>
+              <div>
+                <h2 className="text-xl font-semibold mb-4">
+                  Test Completed! Your Score: {score} / {randomQuestions.length}
+                </h2>
+                {score >= 8 ? (
+                  <div>
+                    <p className="text-green-600 mb-4">Congratulations! You passed the test.</p>
+                    <p className="mb-4">
+                      You may now apply to become ATC at IDVACC. Please include a screenshot of this page with the code below:
+                    </p>
+                    <p className="bg-blue-100 p-2 rounded">{uniqueCode}</p>
+                    <button
+                      className="p-2 bg-green-500 text-white rounded mt-6 hover:bg-green-700"
+                      onClick={() => router.push('/verify-code')}
+                    >
+                      APPLY NOW
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-red-500">You need at least 8 correct answers to pass.</p>
+                )}
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
     </div>

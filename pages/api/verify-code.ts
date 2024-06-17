@@ -1,27 +1,31 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 import fs from 'fs';
 import path from 'path';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    const { code } = req.body;
-    const filePath = path.join(process.cwd(), 'generatedCodes.txt');
+const codesFilePath = path.join(process.cwd(), 'codes.txt');
 
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error reading file', err);
-        return res.status(500).json({ success: false, message: 'Internal Server Error' });
-      }
+const verifyCode = (req: NextApiRequest, res: NextApiResponse) => {
+  const { code } = req.body;
 
-      const codes = data.split('\n').filter(Boolean); // Split and filter out empty lines
-      if (codes.includes(code)) {
-        res.status(200).json({ success: true, message: 'Valid Code' });
-      } else {
-        res.status(400).json({ success: false, message: 'Invalid Code' });
-      }
-    });
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+  if (!code) {
+    return res.status(400).json({ success: false, message: 'Code is required' });
   }
-}
+
+  fs.readFile(codesFilePath, 'utf-8', (err, data) => {
+    if (err) {
+      console.error('Error reading codes file:', err);
+      return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+
+    const codes = data.split('\n').filter(Boolean).map((line) => JSON.parse(line));
+    const codeData = codes.find((item) => item.code === code);
+
+    if (codeData) {
+      return res.status(200).json({ success: true, name: codeData.name, idNumber: codeData.idNumber });
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid code' });
+    }
+  });
+};
+
+export default verifyCode;

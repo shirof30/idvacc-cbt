@@ -3,15 +3,19 @@ import axios from 'axios';
 
 const VerifyCode = () => {
   const [code, setCode] = useState('');
-  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [verificationResult, setVerificationResult] = useState<{ isValid: boolean; name?: string; idNumber?: string } | null>(null);
 
   const handleVerify = async () => {
     try {
       const response = await axios.post('/api/verify-code', { code });
-      setIsValid(response.data.success);
+      if (response.data.success) {
+        setVerificationResult({ isValid: true, name: response.data.name, idNumber: response.data.idNumber });
+      } else {
+        setVerificationResult({ isValid: false });
+      }
     } catch (error) {
       console.error('Error verifying code:', error);
-      setIsValid(false);
+      setVerificationResult({ isValid: false });
     }
   };
 
@@ -32,9 +36,11 @@ const VerifyCode = () => {
         >
           Verify
         </button>
-        {isValid !== null && (
-          <p className={`mt-4 ${isValid ? 'text-green-500' : 'text-red-500'}`}>
-            {isValid ? 'Valid Code' : 'Invalid Code'}
+        {verificationResult !== null && (
+          <p className={`mt-4 ${verificationResult.isValid ? 'text-green-500' : 'text-red-500'}`}>
+            {verificationResult.isValid
+              ? `Valid Code for ${verificationResult.name} (${verificationResult.idNumber})`
+              : 'Invalid Code'}
           </p>
         )}
       </div>
