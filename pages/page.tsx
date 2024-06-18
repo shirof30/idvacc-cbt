@@ -119,8 +119,12 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-        <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
+      <div
+        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat bg-gray-800/50 filter blur-sm z-0"
+        style={{ backgroundImage: "url('/bgimg.png')" }}
+      ></div>
+      <div className="relative flex flex-col items-center justify-center min-h-screen p-4 z-10">
+        <div className="w-full max-w-4xl bg-white bg-opacity-90 rounded-lg shadow-md p-6">
           <h1 className="text-2xl justify-center font-bold mb-4">Computer Based Training</h1>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
@@ -187,7 +191,9 @@ export default function Home() {
           </div>
         )}
       </div>
-      <Footer />
+      <div className="relative z-20 w-full">
+        <Footer />
+      </div>
     </>
   );
 }
