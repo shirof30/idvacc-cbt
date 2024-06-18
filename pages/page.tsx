@@ -114,7 +114,7 @@ export default function Home() {
       return section;
     });
     setSections(updatedSections);
-  }, []);
+  }, [sections]);
 
   return (
     <>
