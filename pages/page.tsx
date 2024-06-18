@@ -84,7 +84,7 @@ export default function Home() {
   const closePreview = () => {
     if (embedLink && startTime) {
       const elapsedTime = (Date.now() - startTime) / 1000; // time in seconds
-      if (elapsedTime >= 30) { // minimum time threshold (e.g., 30 seconds)
+      if (elapsedTime >= 1) { // minimum time threshold (e.g., 30 seconds)
         setSections((prevSections) =>
           prevSections.map((section) => ({
             ...section,
@@ -100,22 +100,21 @@ export default function Home() {
   };
 
   useEffect(() => {
-    setSections((prevSections) =>
-      prevSections.map((section) => {
-        const allViewed = section.chapters.every((chapter) => chapter.viewed);
-        if (allViewed && !section.chapters.find((ch) => ch.isPreTest)) {
-          return {
-            ...section,
-            chapters: [
-              ...section.chapters,
-              { chapter: section.chapters.length + 1, name: 'Take Pre-Test', link: '', viewed: false, isPreTest: true },
-            ],
-          };
-        }
-        return section;
-      })
-    );
-  }, [sections]);
+    const updatedSections = sections.map((section) => {
+      const allViewed = section.chapters.every((chapter) => chapter.viewed);
+      if (allViewed && !section.chapters.find((ch) => ch.isPreTest)) {
+        return {
+          ...section,
+          chapters: [
+            ...section.chapters,
+            { chapter: section.chapters.length + 1, name: 'Take Pre-Test', link: '/test', viewed: false, isPreTest: true },
+          ],
+        };
+      }
+      return section;
+    });
+    setSections(updatedSections);
+  }, []);
 
   return (
     <>
