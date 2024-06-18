@@ -116,6 +116,14 @@ export default function Home() {
     setSections(updatedSections);
   }, [sections]);
 
+  const handlePreTestClick = (sectionIndex: number, chapterIndex: number) => {
+    setSections((prevSections) => {
+      const newSections = [...prevSections];
+      newSections[sectionIndex].chapters[chapterIndex].viewed = true;
+      return newSections;
+    });
+  };
+
   return (
     <>
       <div
@@ -147,8 +155,14 @@ export default function Home() {
                         <td className="py-2 px-4">{chapter.chapter}</td>
                         <td className="py-2 px-4 cursor-pointer text-blue-500">
                           {chapter.isPreTest ? (
-                            <Link href="/test" legacyBehavior>
-                              <a>{chapter.name}</a>
+                            <Link href={chapter.link} legacyBehavior>
+                              <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => handlePreTestClick(idx, chapterIdx)}
+                              >
+                                {chapter.name}
+                              </a>
                             </Link>
                           ) : (
                             <span onClick={() => openPreview(chapter.link)}>{chapter.name}</span>
