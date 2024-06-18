@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Footer from './footer';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface Chapter {
   chapter: number;
@@ -73,6 +74,7 @@ export default function Home() {
     },
   ]);
   const [startTime, setStartTime] = useState<number | null>(null);
+  const router = useRouter();
 
   const openPreview = (link: string) => {
     if (link) {
@@ -127,48 +129,55 @@ export default function Home() {
   return (
     <>
       <div
-        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat bg-gray-800/50 filter blur-sm z-0"
+        className="fixed inset-0 z-0 w-full h-full bg-center bg-no-repeat bg-cover bg-gray-800/50 filter blur-sm"
         style={{ backgroundImage: "url('/bgimg.png')" }}
       ></div>
-      <div className="relative flex flex-col items-center justify-center min-h-screen p-4 z-10">
-        <div className="w-full max-w-4xl bg-white bg-opacity-90 rounded-lg shadow-md p-6">
-          <h1 className="text-2xl justify-center font-bold mb-4">Computer Based Training</h1>
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md bg-opacity-90">
+          <h1 className="justify-center mb-4 text-2xl font-bold">Computer Based Training</h1>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white">
-              <thead className="bg-gray-200 text-gray-600">
+              <thead className="text-gray-600 bg-gray-200">
                 <tr>
-                  <th className="w-1/6 py-2 px-4 text-left">Chapter</th>
-                  <th className="w-4/6 py-2 px-4 text-left">Name</th>
-                  <th className="w-1/6 py-2 px-4 text-left">Done?</th>
+                  <th className="w-1/6 px-4 py-2 text-left">Chapter</th>
+                  <th className="w-4/6 px-4 py-2 text-left">Name</th>
+                  <th className="w-1/6 px-4 py-2 text-left">Done?</th>
                 </tr>
               </thead>
               <tbody className="text-gray-700">
                 {sections.map((section, idx) => (
                   <React.Fragment key={idx}>
                     <tr className="bg-gray-100">
-                      <td colSpan={3} className="py-2 px-4 font-semibold">
+                      <td colSpan={3} className="px-4 py-2 font-semibold">
                         {section.block}
                       </td>
                     </tr>
                     {section.chapters.map((chapter, chapterIdx) => (
                       <tr key={chapterIdx} className="border-t">
-                        <td className="py-2 px-4">{chapter.chapter}</td>
-                        <td className="py-2 px-4 cursor-pointer text-blue-500">
+                        <td className="px-4 py-2">{chapter.chapter}</td>
+                        <td className="px-4 py-2 text-blue-500 cursor-pointer">
                           {chapter.isPreTest ? (
                             <Link href={chapter.link} legacyBehavior>
-                              <a
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={() => handlePreTestClick(idx, chapterIdx)}
-                              >
-                                {chapter.name}
-                              </a>
+                              {
+                                (
+                                <a
+                                  onClick={() => {
+                                    router.push(chapter.link)
+                                    setTimeout(() => {
+                                      router.refresh()
+                                    }, 1000)
+                                  }}
+                                >
+                                  {chapter.name}
+                                </a>) 
+                              }
+                              
                             </Link>
                           ) : (
                             <span onClick={() => openPreview(chapter.link)}>{chapter.name}</span>
                           )}
                         </td>
-                        <td className="py-2 px-4 text-center">
+                        <td className="px-4 py-2 text-center">
                           {chapter.viewed ? '✔' : '✕'}
                         </td>
                       </tr>
@@ -181,9 +190,9 @@ export default function Home() {
         </div>
 
         {embedLink && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg relative w-[90%] md:w-[70%]">
-              <div className="flex justify-between items-center p-4 border-b">
+              <div className="flex items-center justify-between p-4 border-b">
                 <h2 className="text-xl font-semibold">CBT Reader</h2>
                 <button
                   onClick={closePreview}
