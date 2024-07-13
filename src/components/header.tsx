@@ -11,7 +11,7 @@ const Header: React.FC = () => {
         <div className={cn('block md:!hidden')}>
           <MobileNav />
         </div>
-        <h1 className="hidden my-3 ml-5 text-2xl font-semibold md:block">Indonesia vAcc CBT</h1>
+        <h1 className="hidden my-3 ml-5 text-2xl font-semibold md:block">Indonesia vACC CBT</h1>
 
         <div className="flex items-center gap-2">
           <UserNav />

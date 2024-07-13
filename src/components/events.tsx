@@ -25,11 +25,11 @@ interface Event {
 }
 
 const Events: React.FC = React.memo(() => {
-  const [events, setEvents] = useState([])
+  const [events, setEvents] = useState<Event[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const fetchEvents = useCallback(async () => {
     const { data } = await axios.get('api/events')
-    setEvents(data)
+    Array.isArray(data) ? setEvents(data) : setEvents([])
     setIsLoading(false)
   }, [])
 
@@ -52,16 +52,25 @@ const Events: React.FC = React.memo(() => {
               </tr>
             </thead>
             <tbody>
-              {events.map((event: Event, index) => (
-                <tr key={event.id || index}>
-                  <td>{index + 1}</td>
-                  <td className="font-semibold hover:underline">
-                    <a href={event.link} target="_blank noopener noreferrer">
-                      {event.name}
-                    </a>
-                  </td>
-                </tr>
-              ))}
+              {
+                events.length > 0 ?
+                  events.map((event: Event, index) => (
+                    <tr key={event.id || index}>
+                      <td>{index + 1}</td>
+                      <td className="font-semibold hover:underline">
+                        <a href={event.link} target="_blank noopener noreferrer">
+                          {event.name}
+                        </a>
+                      </td>
+                    </tr>
+                  ))
+                  :
+                  <tr>
+                    <td colSpan={2} className="text-center">
+                      No events found
+                    </td>
+                  </tr>
+              }
             </tbody>
           </table>
       }
