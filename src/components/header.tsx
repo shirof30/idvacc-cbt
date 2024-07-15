@@ -3,6 +3,7 @@ import { cn } from "@lib/utils";
 import { useState } from "react";
 import { DashboardNav, NavItems } from "./sidebar";
 import { MenuIcon } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 const Header: React.FC = () => {
   return (
@@ -48,7 +49,7 @@ const UserNav = () => {
       </div>
       <ul tabIndex={0} className="shadow dropdown-content menu bg-base-200 rounded-box w-52 z-[1] mt-2 font-semibold">
         <li><a href="#">Profile</a></li>
-        <li><a href="#">Logout</a></li>
+        <li><button onClick={() => signOut()}>Logout</button></li>
       </ul>
     </div>
   )

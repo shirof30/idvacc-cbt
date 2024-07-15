@@ -25,12 +25,16 @@ interface ATCSession {
   scratchpadmods: number;
 }
 
-const ATCSessions: React.FC = React.memo(() => {
+type ATCSessionsProps = {
+  cid: string;
+}
+
+const ATCSessions: React.FC<ATCSessionsProps> = React.memo(({ cid }) => {
   const [atcSessions, setATCSessions] = useState<ATCSession[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchATCSessions = useCallback(async () => {
-    const response = await axios.get<{items: ATCSession[]}>('api/atc-sessions?cid=1809015')
+    const response = await axios.get<{items: ATCSession[]}>(`api/atc-sessions?cid=${cid}`)
     const data = response.data.items
     if (data.length > 0) {
       setATCSessions(data)

@@ -13,8 +13,8 @@ export const metadata: Metadata = {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
+    <html lang="en">
+      <body suppressHydrationWarning>
         <NextTopLoader showSpinner={false} />
         <div className="flex min-h-screen bg-[#e9ecef] overflow-y-auto">
           <Sidebar />

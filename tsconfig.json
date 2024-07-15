@@ -23,6 +23,8 @@
       "@hooks/*": ["./hooks/*"],
       "@lib/*": ["./lib/*"],
       "@data/*": ["./data/*"],
+      "@auth": ["./auth"],
+      "@public/*": ["./public/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
