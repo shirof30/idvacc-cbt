@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -94,11 +95,11 @@ const Test = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/bgimg.png')" }}>
+    <div className="relative min-h-screen bg-center bg-no-repeat bg-cover" style={{ backgroundImage: "url('/bgimg.png')" }}>
       <div className="absolute inset-0 bg-black opacity-50"></div> {/* Overlay with opacity */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-4xl bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-3xl justify-center font-bold mb-4">IDVACC ATC Initial test</h1>
+        <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
+          <h1 className="justify-center mb-4 text-3xl font-bold">IDVACC ATC Initial test</h1>
           {currentStep === 0 ? (
             <div>
               <input
@@ -117,7 +118,7 @@ const Test = () => {
               />
               <button
                 onClick={handleStartTest}
-                className="w-full p-3 bg-blue-600 text-white rounded hover:bg-blue-700"
+                className="w-full p-3 text-white bg-blue-600 rounded hover:bg-blue-700"
               >
                 Start Test
               </button>
@@ -126,10 +127,10 @@ const Test = () => {
             <>
               {!isTestCompleted ? (
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-4 text-xl font-semibold">
                     {`Question ${currentQuestionIndex + 1} / ${randomQuestions.length}`}
                   </h2>
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-4 text-xl font-semibold">
                     {randomQuestions[currentQuestionIndex].question}
                   </h2>
                   <div className="flex flex-col">
@@ -145,7 +146,7 @@ const Test = () => {
                   </div>
                   <div className="flex justify-between mt-4">
                     <button
-                      className="p-2 bg-gray-500 text-white rounded hover:bg-gray-700"
+                      className="p-2 text-white bg-gray-500 rounded hover:bg-gray-700"
                       onClick={goToPreviousQuestion}
                       disabled={currentQuestionIndex === 0}
                     >
@@ -153,14 +154,14 @@ const Test = () => {
                     </button>
                     {currentQuestionIndex + 1 === randomQuestions.length ? (
                       <button
-                        className="p-2 bg-green-500 text-white rounded hover:bg-green-700"
+                        className="p-2 text-white bg-green-500 rounded hover:bg-green-700"
                         onClick={handleSubmit}
                       >
                         Submit
                       </button>
                     ) : (
                       <button
-                        className="p-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                        className="p-2 text-white bg-blue-500 rounded hover:bg-blue-700"
                         onClick={goToNextQuestion}
                       >
                         Next
@@ -170,18 +171,18 @@ const Test = () => {
                 </div>
               ) : (
                 <div>
-                  <h2 className="text-xl font-semibold mb-4">
+                  <h2 className="mb-4 text-xl font-semibold">
                     Test Completed! Your Score: {score} / {randomQuestions.length}
                   </h2>
                   {score >= 8 ? (
                     <div>
-                      <p className="text-green-600 mb-4">Congratulations! You passed the test.</p>
+                      <p className="mb-4 text-green-600">Congratulations! You passed the test.</p>
                       <p className="mb-4">
                         You may now apply to become ATC at IDVACC. Please include a screenshot of this page with the code below:
                       </p>
-                      <p className="bg-blue-100 p-2 rounded">{uniqueCode}</p>
+                      <p className="p-2 bg-blue-100 rounded">{uniqueCode}</p>
                       <button
-                        className="p-2 bg-green-500 text-white rounded mt-6 hover:bg-green-700"
+                        className="p-2 mt-6 text-white bg-green-500 rounded hover:bg-green-700"
                         onClick={() => router.push('/verify-code')}
                       >
                         APPLY NOW
