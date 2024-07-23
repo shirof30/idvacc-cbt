@@ -68,11 +68,11 @@ const Sidebar: React.FC = ({ className }: SidebarProps) => {
 
   return (
     <div>
-      <nav className={cn("mt-8 border rounded-e-xl h-[85dvh] bg-secondary md:block hidden", status && 'duration-500', !isMinimized ? 'w-56' : 'w-[72px]', className)}>
+      <nav className={cn("mt-8 border border-base-200 rounded-e-xl h-[85dvh] bg-base-300 md:block hidden", status && 'duration-500', !isMinimized ? 'w-56' : 'w-[72px]', className)}>
         <div className="py-4 space-y-4">
           <div className="px-3 py-2">
             <div className="mt-2 space-y-1">
-              <div className={cn('text-3xl text-neutral cursor-pointer ms-2 -mt-3 mb-10 rounded-full size-8')} onClick={handleToggle}>
+              <div className={cn('text-3xl text-neutral-content cursor-pointer ms-2 -mt-3 mb-10 rounded-full size-8')} onClick={handleToggle}>
                 {isMinimized ? <Menu /> : <ChevronLeft />}
               </div>
               <DashboardNav items={NavItems} />
@@ -99,7 +99,7 @@ export const DashboardNav = ({ items, setOpen, isMobile = false }: DashboardNavP
         return (
           item.href && (
             <div key={idx} className={`${isMinimized ? 'tooltip tooltip-right' : ''}`} data-tip={item.title}>
-              <Link href={!item.href ? '/' : item.href} className={cn('flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-base-100 hover:text-neutral transition-colors duration-300', path === item.href ? 'bg-white' : 'bg-transparent')} onClick={() => { if (setOpen) setOpen(false) }}>
+              <Link href={!item.href ? '/' : item.href} className={cn('flex items-center gap-2 overflow-hidden rounded-md py-2 text-sm font-medium hover:bg-base-100 hover:text-neutral-content transition-colors duration-300', path === item.href ? 'bg-primary text-primary-content' : 'bg-transparent')} onClick={() => { if (setOpen) setOpen(false) }}>
                 <Icon className='ml-3 size-5' />
                 {isMobile || (!isMinimized && !isMobile) ? <span className='mr-2 font-semibold truncate'>{item.title}</span> : ''}
               </Link>
