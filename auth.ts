@@ -1,7 +1,7 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import { Provider } from "next-auth/providers";
 import { prisma } from "@lib/prisma";
-import { AdapterAccount, AdapterUser, type Adapter } from "next-auth/adapters";
+import { AdapterAccount, AdapterSession, AdapterUser, type Adapter } from "next-auth/adapters";
 import { PrismaClient } from "@prisma/client";
 import { VATSIMData } from "./next-auth";
 
@@ -47,6 +47,14 @@ const CustomAdapter = (prisma: PrismaClient): Adapter => {
       });
       return (userData as unknown as AdapterUser) ?? null;
     },
+    getAccount: async(provider, providerAccountId) => {
+      return prisma.account.findFirst({
+        where: {
+          provider,
+          providerAccountId
+        }
+      }) as Promise<AdapterAccount | null>
+    },
     linkAccount: data => prisma.account.create({
       data: {
         refreshToken: data.refresh_token,
@@ -62,6 +70,23 @@ const CustomAdapter = (prisma: PrismaClient): Adapter => {
         provider_providerAccountId
       }
     }) as unknown as AdapterAccount,
+    getSessionAndUser: async (sessionToken) => {
+      const userSession =  await prisma.session.findUnique({
+        where: { sessionToken },
+        include: { user: true }
+      })
+      if (!userSession) return null
+      const { user, ...session } = userSession
+      return { user, session } as unknown as { user: AdapterUser, session: AdapterSession }
+    },
+    createSession: data => prisma.session.create({ data }),
+    updateSession: data => prisma.session.update({
+      where: { sessionToken: data.sessionToken },
+      data
+    }),
+    deleteSession: sessionToken => prisma.session.delete({
+      where: { sessionToken }
+    }),
   }
 }
 
@@ -72,7 +97,7 @@ const providers: Provider[] = [
     name: 'VATSIM Connect SSO',
     type: 'oauth',
     issuer: 'https://vatsim.net',
-    allowDangerousEmailAccountLinking: true,
+    // allowDangerousEmailAccountLinking: true,
     clientId: process.env.AUTH_CLIENT_ID_DEV, // DEVELOPMENT MODE
     clientSecret: process.env.AUTH_CLIENT_SECRET_DEV, // DEVELOPMENT MODE
     authorization: {
