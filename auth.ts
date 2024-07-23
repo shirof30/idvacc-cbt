@@ -153,7 +153,7 @@ export const authOptions: NextAuthConfig = {
     //   return baseUrl
     // },    
     async authorized({ auth }) { 
-      return !!auth
+      return !!auth?.user
     },
   },
   session: {

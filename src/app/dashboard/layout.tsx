@@ -2,6 +2,8 @@ import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import NextTopLoader from "nextjs-toploader";
 import type { Metadata } from 'next';
+import { auth } from "@auth";
+import { redirect } from "next/navigation";
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -11,7 +13,10 @@ export const metadata: Metadata = {
   description: "CBT Training page for IDvACC",
 }
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default async function DashboardLayout({ children }: DashboardLayoutProps) {
+  const session = await auth();
+  if(!session) redirect('/login');
+  
   return (
     <html lang="en">
       <body suppressHydrationWarning>
