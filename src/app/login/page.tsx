@@ -50,7 +50,7 @@ const LoginPage: React.FC<LoginPageProps> = async ({ searchParams }) => {
             }
           }
         } className="flex items-center justify-center mt-12">
-          <button className="p-4 h-1/6 flex justify-center items-center text-lg bg-[#29b473] btn hover:bg-[#197249] hover:text-white" type="submit">
+          <button className="p-4 h-1/6 flex justify-center items-center text-lg text-white bg-[#29b473] btn hover:bg-[#197249] hover:text-neutral-content" type="submit">
             <Image src={VatsimLogo} width={50} alt="VATSIM Logo"/>
             <p>Sign In with VATSIM SSO</p>
           </button>

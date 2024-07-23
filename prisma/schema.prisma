@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -8,7 +5,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
-}           
+}
 
 model VerifyCode {
   id        String   @id @default(cuid())
@@ -19,33 +16,36 @@ model VerifyCode {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  cid       String   @unique
+  id        String        @id @default(cuid())
+  cid       String        @unique
   name      String
+  email     String        @unique
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  Account   Account[]
+  Session   Session[]
   courses   UserCourse[]
   sections  UserSection[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Course {
-  id        String   @id @default(cuid())
+  id        String       @id @default(cuid())
   title     String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
   sections  Section[]
   users     UserCourse[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Section {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   courseId  String
   title     String
   link      String
-  course    Course   @relation(fields: [courseId], references: [id])
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  course    Course        @relation(fields: [courseId], references: [id])
   users     UserSection[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model UserCourse {
@@ -55,9 +55,9 @@ model UserCourse {
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user      User     @relation(fields: [userId], references: [id])
   course    Course   @relation(fields: [courseId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
   @@unique([userId, courseId])
 }
 
@@ -68,7 +68,37 @@ model UserSection {
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  section   Section  @relation(fields: [sectionId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+}
 
-  user      User       @relation(fields: [userId], references: [id])
-  section   Section    @relation(fields: [sectionId], references: [id])
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refreshToken      String? 
+  accessToken       String? 
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
 }

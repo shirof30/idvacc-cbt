@@ -11,7 +11,7 @@ const Courses: React.FC = () => {
   return (
     <div>
       <h1 className="text-xl font-semibold">My Courses</h1>
-      <div className="p-4 mt-5 bg-base-100 rounded-3xl min-h-[70dvh]">
+      <div className="p-4 mt-5 bg-base-content rounded-3xl min-h-[70dvh]">
         <div className="flex flex-wrap gap-6 xl:justify-start lg:justify-center ms-auto">
           {
             courses_data.map((section: Section, idx: number) => (
@@ -23,7 +23,7 @@ const Courses: React.FC = () => {
                   <div className="p-3 text-white card-body">
                     <h1 className="text-lg font-semibold card-title">{`Block ${idx + 1}: ${section.block}`}</h1>
                     <div className="absolute right-5 bottom-3">
-                      <div className="badge">
+                      <div className="badge badge-success">
                         <span>&#10004; Completed</span>
                       </div>
                     </div>

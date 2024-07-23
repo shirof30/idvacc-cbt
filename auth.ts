@@ -1,5 +1,70 @@
 import NextAuth, { NextAuthConfig } from "next-auth";
 import { Provider } from "next-auth/providers";
+import { prisma } from "@lib/prisma";
+import { AdapterAccount, AdapterUser, type Adapter } from "next-auth/adapters";
+import { PrismaClient } from "@prisma/client";
+import { VATSIMData } from "./next-auth";
+
+const CustomAdapter = (prisma: PrismaClient): Adapter => {
+  return {
+    createUser: async (user: AdapterUser & VATSIMData & { email: string }) => {
+      await prisma.user.create({
+        data: {
+          cid: user.cid,
+          name: user.name || user.personal.name_full,
+          email: user.email || user.personal.email,
+        }
+      });
+      return user;
+    },
+    updateUser: ({ id, ...data}) => prisma.user.update({
+      where: { id },
+      data: {
+        ...data,
+        name: data.name || ''
+      }
+    }) as unknown as Promise<AdapterUser>,
+    getUser: id => prisma.user.findUnique({
+      where: { id }
+    }) as unknown as Promise<AdapterUser>,
+    deleteUser: id => prisma.user.delete({
+      where: { id }
+    }) as unknown as Promise<AdapterUser>,
+    getUserByAccount: async (provider_providerAccountId) => {
+      const userData = await prisma.account.findUnique({
+        where: {
+          provider_providerAccountId
+        },
+        select: { user: true }
+      })
+      return (userData as unknown as AdapterUser) ?? null
+    },
+    getUserByEmail: async (email) => {
+      const userData = await prisma.user.findUnique({
+        where: {
+          email: email
+        }
+      });
+      return (userData as unknown as AdapterUser) ?? null;
+    },
+    linkAccount: data => prisma.account.create({
+      data: {
+        refreshToken: data.refresh_token,
+        accessToken: data.access_token,
+        provider: data.provider,
+        providerAccountId: data.providerAccountId,
+        type: data.type,
+        userId: data.userId,
+      }
+    }) as unknown as AdapterAccount,
+    unlinkAccount: (provider_providerAccountId) => prisma.account.delete({
+      where: {
+        provider_providerAccountId
+      }
+    }) as unknown as AdapterAccount,
+  }
+}
+
 
 const providers: Provider[] = [
   {
@@ -7,6 +72,7 @@ const providers: Provider[] = [
     name: 'VATSIM Connect SSO',
     type: 'oauth',
     issuer: 'https://vatsim.net',
+    allowDangerousEmailAccountLinking: true,
     clientId: process.env.AUTH_CLIENT_ID_DEV, // DEVELOPMENT MODE
     clientSecret: process.env.AUTH_CLIENT_SECRET_DEV, // DEVELOPMENT MODE
     authorization: {
@@ -26,9 +92,9 @@ const providers: Provider[] = [
       return {
         id: profile.data.cid,
         cid: profile.data.cid,
-        name: profile.data.full_name,
-        user_details: profile.data.vatsim_details,
-        email: profile.data.email,
+        name: profile.data.personal.name_full,
+        user_details: profile.data.vatsim,
+        email: profile.data.personal.email,
         emailVerified: true,
       }
     }
@@ -46,6 +112,7 @@ export const providerMap = providers.map(provider => {
 
 export const authOptions: NextAuthConfig = {
   providers,
+  adapter: CustomAdapter(prisma),
   callbacks: {
     async session({ session, token }) {
       session.user = token.data as any;
@@ -57,10 +124,10 @@ export const authOptions: NextAuthConfig = {
       }
       return token;
     },
-    async redirect({ baseUrl }) {
-      return baseUrl
-    },
-    async authorized({ auth }) {
+    // async redirect({ baseUrl }) {
+    //   return baseUrl
+    // },    
+    async authorized({ auth }) { 
       return !!auth
     },
   },
@@ -71,7 +138,7 @@ export const authOptions: NextAuthConfig = {
     signIn: '/login',
     error: '/error',
   },
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.AUTH_SECRET
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth(authOptions)
