@@ -97,7 +97,7 @@ const CustomAdapter = (prisma: PrismaClient): Adapter => {
             provider: data.provider,
             providerAccountId: data.providerAccountId,
             type: data.type,
-            userId: data.userId,
+            userId: data.userId
           }
         })
         console.log('Account linked:', account);
@@ -158,9 +158,7 @@ const providers: Provider[] = [
     name: 'VATSIM Connect SSO',
     type: 'oauth',
     issuer: 'https://vatsim.net',
-    // allowDangerousEmailAccountLinking: true,
-    clientId: process.env.AUTH_CLIENT_ID_DEV, // DEVELOPMENT MODE
-    clientSecret: process.env.AUTH_CLIENT_SECRET_DEV, // DEVELOPMENT MODE
+    clientId: process.env.AUTH_CLIENT_ID_DEV, //               expiresAt: new Date(Date.now() + response.data.expires_in * 1000)PMENT MODE
     authorization: {
       url: `${process.env.AUTH_OAUTH_URL_DEV}/oauth/authorize?response_type=code`,
       params: {
@@ -202,7 +200,9 @@ export const authOptions: NextAuthConfig = {
   adapter: CustomAdapter(prisma),
   callbacks: {
     async session({ session, token }) {
-      session.user = token.data as any;
+      if (token.data) {
+        session.user = token.data as AdapterUser & VATSIMData
+      }
       return session;
     },
     async jwt({ token, profile, account }) {
@@ -211,9 +211,6 @@ export const authOptions: NextAuthConfig = {
       }
       return token;
     },
-    // async redirect({ baseUrl }) {
-    //   return baseUrl
-    // },    
     async authorized({ auth }) {
       return !!auth?.user
     },
