@@ -1,13 +1,52 @@
 import type { Metadata } from "next";
 import { courses_data, Section } from "@data/constant-data";
 import Link from "next/link";
+import { prisma } from "@lib/prisma";
+import { auth } from "@auth";
 
 
 export const metadata: Metadata = {
   title: "Courses - IDvACC CBT SITE",
 }
 
-const Courses: React.FC = () => {
+const Courses: React.FC = async () => {
+  const session = await auth();
+
+  const user = await prisma.user.findUnique({
+    where: { cid: session?.user.cid },
+    select: { id: true }
+  })
+
+  const userCourses = await prisma.userCourse.findMany({
+    where: { userId: user?.id },
+    select: {
+      completed: true,
+      course: {
+        select: {
+          title: true,
+          id: true
+        },
+      }
+    },
+    orderBy: {
+      course: {
+        title: 'asc'
+      }
+    }
+  })
+
+  if (userCourses.length === 0) {
+    courses_data.forEach(async (section) => {
+      await prisma.userCourse.create({
+        data: {
+          userId: user?.id ?? "",
+          courseId: section.id,
+          completed: false
+        }
+      })
+    })
+  }
+
   return (
     <div>
       <h1 className="text-xl font-semibold">My Courses</h1>
@@ -23,9 +62,16 @@ const Courses: React.FC = () => {
                   <div className="p-3 text-white card-body">
                     <h1 className="text-lg font-semibold card-title">{`Block ${idx + 1}: ${section.block}`}</h1>
                     <div className="absolute right-5 bottom-3">
-                      <div className="badge badge-success">
-                        <span>&#10004; Completed</span>
-                      </div>
+                      {
+                        userCourses[idx]?.completed ? (
+                          <div className="badge badge-success">
+                            <span>&#10004; Completed</span>
+                          </div>
+                        )
+                        :
+                        <>
+                        </>
+                      }
                     </div>
                   </div>
                 </div>

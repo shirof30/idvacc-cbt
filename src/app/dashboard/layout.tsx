@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { auth } from "@auth";
 import { redirect } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
+import { prisma } from "@lib/prisma";
 
 interface DashboardLayoutProps {
   children: React.ReactNode
