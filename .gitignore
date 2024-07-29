@@ -21,7 +21,6 @@ __tests__
 # misc
 .DS_Store
 *.pem
-*.db
 
 # debug
 npm-debug.log*
