@@ -2,6 +2,9 @@
   "name": "cbt-website",
   "version": "0.1.2",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,7 +14,7 @@
   "dependencies": {
     "@auth/prisma-adapter": "^2.4.1",
     "@prisma/client": "5.17.0",
-    "@types/node": "^20.14.11",
+    "@types/node": "^22.0.0",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "lucide-react": "^0.399.0",
@@ -20,6 +23,7 @@
     "nextjs-toploader": "^1.6.12",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-google-slides": "^4.0.0",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "tailwind-merge": "^2.3.0",
@@ -37,6 +41,7 @@
     "postcss": "^8.4.39",
     "prisma": "^5.17.0",
     "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
   }
 }
