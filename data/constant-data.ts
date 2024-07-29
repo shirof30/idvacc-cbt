@@ -2,6 +2,7 @@ export interface Section {
   block: string;
   imgUrl: string;
   chapters: Chapter[];
+  id: string
 }
 
 export interface Chapter {
@@ -14,6 +15,7 @@ export interface Chapter {
 
 export const courses_data: Section[] = [
   {
+    id: 'clyy4f1ei0000w5x9q2aihwxd',
     block: 'Welcome to IDvACC',
     imgUrl: 'https://images.pexels.com/photos/12118409/pexels-photo-12118409.jpeg?cs=srgb&dl=pexels-alireza-akhlaghi-official-12118409.jpg&fm=jpg&w=1745&h=853&fit=crop',
     chapters: [
@@ -32,6 +34,7 @@ export const courses_data: Section[] = [
     ]
   },
   {
+    id: 'clyy4f1q00003w5x93gjd0n9m',
     block: 'New - Block I - Foundations',
     imgUrl: 'https://images.pexels.com/photos/18719092/pexels-photo-18719092.jpeg?cs=srgb&dl=pexels-miguel-cuenca-67882473-18719092.jpg&fm=jpg&w=1745&h=853&fit=crop',
     chapters: [
@@ -68,6 +71,7 @@ export const courses_data: Section[] = [
     ]
   },
   {
+    id: 'clyy4f1rh0009w5x9wwc5ropl',
     block: 'New - Block II - Ground Training (S1)',
     imgUrl: 'https://images.pexels.com/photos/2315265/pexels-photo-2315265.jpeg?cs=srgb&dl=pexels-joel-super-188959-2315265.jpg&fm=jpg&h=853&w=1745&fit=crop',
     chapters: [
@@ -92,6 +96,7 @@ export const courses_data: Section[] = [
     ]
   },
   {
+    id: 'clyy4f1sx000dw5x9okkqozvr',
     block: 'New - Block III - Tower Training (S2)',
     imgUrl: 'https://images.pexels.com/photos/10893728/pexels-photo-10893728.jpeg?cs=srgb&dl=pexels-id23-1442770-10893728.jpg&fm=jpg&h=853&w=1745&fit=crop',
     chapters: [
@@ -128,6 +133,7 @@ export const courses_data: Section[] = [
     ]
   },
   {
+    id: 'clyy4f1ud000jw5x9lnnhjfwy',
     block: 'S3 Rating: Radar Training',
     imgUrl: 'https://images.pexels.com/photos/3582491/pexels-photo-3582491.jpeg?cs=srgb&dl=pexels-ibrahimboran-3582491.jpg&fm=jpg&h=853&w=1745&fit=crop',
     chapters: [
@@ -146,6 +152,7 @@ export const courses_data: Section[] = [
     ]
   },
   {
+    id: 'clyy4f1vu000mw5x9c9hluh5e',
     block: 'C1 Rating: Centre Training',
     imgUrl: 'https://images.pexels.com/photos/3402846/pexels-photo-3402846.jpeg?cs=srgb&dl=pexels-captainsopon-3402846.jpg&fm=jpg&h=853&w=1745&fit=crop',
     chapters: [
