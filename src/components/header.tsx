@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DashboardNav, NavItems } from "./sidebar";
 import { MenuIcon } from "lucide-react";
 import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const Header: React.FC = () => {
   return (
@@ -42,10 +43,12 @@ const MobileNav = () => {
 }
 
 const UserNav = () => {
+  const { data: session }  = useSession()
+  
   return (
     <div className="cursor-pointer avatar dropdown dropdown-end">
       <div tabIndex={0} className="w-10 rounded-full">
-        <img src="https://ui-avatars.com/api/?background=0D8ABC&color=fff" alt="avatar" />
+        <img src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${session?.user.personal.name_full}`} alt="avatar" />
       </div>
       <ul tabIndex={0} className="shadow dropdown-content menu bg-base-200 rounded-box w-52 z-[1] mt-2 font-semibold">
         <li><a href="#">Profile</a></li>
