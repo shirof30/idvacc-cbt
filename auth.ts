@@ -158,7 +158,7 @@ const providers: Provider[] = [
     name: 'VATSIM Connect SSO',
     type: 'oauth',
     issuer: 'https://vatsim.net',
-    clientId: process.env.AUTH_CLIENT_ID_DEV, //               expiresAt: new Date(Date.now() + response.data.expires_in * 1000)PMENT MODE
+    clientId: process.env.AUTH_CLIENT_ID_DEV,
     authorization: {
       url: `${process.env.AUTH_OAUTH_URL_DEV}/oauth/authorize?response_type=code`,
       params: {
