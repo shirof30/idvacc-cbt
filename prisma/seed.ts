@@ -6,6 +6,7 @@ async function main() {
     where: { id: '1' },
     update: {},
     create: {
+      id: 'clyy4f1ei0000w5x9q2aihwxd',
       title: 'Welcome to IDvACC',
       sections: {
         createMany: {
@@ -28,6 +29,7 @@ async function main() {
     where: { id: '2' },
     update: {},
     create: {
+      id: 'clyy4f1q00003w5x93gjd0n9m',
       title: 'Block I - Foundations',
       sections: {
         createMany: {
@@ -62,6 +64,7 @@ async function main() {
     where: { id: '3' },
     update: {},
     create: {
+      id: 'clyy4f1rh0009w5x9wwc5ropl',
       title: 'New Block II - Ground Training (S1)',
       sections: {
         createMany: {
@@ -88,6 +91,7 @@ async function main() {
     where: { id: '4' },
     update: {},
     create: {
+      id: 'clyy4f1sx000dw5x9okkqozvr',
       title: 'Block III - Tower Training (S2)',
       sections: {
         createMany: {
@@ -122,6 +126,7 @@ async function main() {
     where: { id: '5' },
     update: {},
     create: {
+      id: 'clyy4f1ud000jw5x9lnnhjfwy',
       title: 'S3 Rating: Radar Training',
       sections: {
         createMany: {
@@ -144,6 +149,7 @@ async function main() {
     where: { id: '6' },
     update: {},
     create: {
+      id: 'clyy4f1vu000mw5x9c9hluh5e',
       title: 'C1 Rating: Centre Training',
       sections: {
         createMany: {
