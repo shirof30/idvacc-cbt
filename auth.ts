@@ -8,85 +8,146 @@ import { VATSIMData } from "./next-auth";
 const CustomAdapter = (prisma: PrismaClient): Adapter => {
   return {
     createUser: async (user: AdapterUser & VATSIMData & { email: string }) => {
-      await prisma.user.create({
+      console.log('Creating user:', user);
+
+      const createdUser = await prisma.user.create({
         data: {
           cid: user.cid,
           name: user.name || user.personal.name_full,
           email: user.email || user.personal.email,
         }
       });
-      return user;
+      console.log('User created:', createdUser);
+      return createdUser as unknown as AdapterUser & VATSIMData;
     },
-    updateUser: ({ id, ...data}) => prisma.user.update({
-      where: { id },
-      data: {
-        ...data,
-        name: data.name || ''
-      }
-    }) as unknown as Promise<AdapterUser>,
-    getUser: id => prisma.user.findUnique({
-      where: { id }
-    }) as unknown as Promise<AdapterUser>,
-    deleteUser: id => prisma.user.delete({
-      where: { id }
-    }) as unknown as Promise<AdapterUser>,
-    getUserByAccount: async (provider_providerAccountId) => {
+    updateUser: async ({ id, ...data }) => {
+      console.log('Updating user with ID:', id, 'and data:', data);
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          ...data,
+          name: data.name || ''
+        }
+      })
+      console.log('User updated:', updatedUser);
+      return updatedUser as unknown as AdapterUser
+    },
+    getUser: async id => {
+      console.log('Getting user with ID:', id);
+      const user = await prisma.user.findUnique({
+        where: { id }
+      })
+      console.log('User found:', user);
+      return user as unknown as AdapterUser
+    },
+    deleteUser: async id => {
+      console.log('Deleting user with ID:', id);
+      const deletedUser = await prisma.user.delete({
+        where: { id }
+      })
+      console.log('User deleted:', deletedUser);
+      return deletedUser as unknown as AdapterUser
+    },
+    getUserByAccount: async provider_providerAccountId => {
+      console.log('Getting user by account with provider and providerAccountId:', provider_providerAccountId);
       const userData = await prisma.account.findUnique({
         where: {
           provider_providerAccountId
         },
         select: { user: true }
       })
+      console.log('User data found:', userData);
       return (userData as unknown as AdapterUser) ?? null
     },
-    getUserByEmail: async (email) => {
+    getUserByEmail: async email => {
+      console.log('Getting user by email:', email);
       const userData = await prisma.user.findUnique({
         where: {
           email: email
         }
       });
+      console.log('User data found:', userData);
       return (userData as unknown as AdapterUser) ?? null;
     },
-    getAccount: async(provider, providerAccountId) => {
-      return prisma.account.findFirst({
+    getAccount: async (provider, providerAccountId) => {
+      console.log('Getting account with provider:', provider, 'and providerAccountId:', providerAccountId);
+      const account = await prisma.account.findFirst({
         where: {
           provider,
           providerAccountId
         }
-      }) as Promise<AdapterAccount | null>
+      })
+      console.log('Account found:', account);
+      return account as unknown as AdapterAccount | null
     },
-    linkAccount: data => prisma.account.create({
-      data: {
-        refreshToken: data.refresh_token,
-        accessToken: data.access_token,
-        provider: data.provider,
-        providerAccountId: data.providerAccountId,
-        type: data.type,
-        userId: data.userId,
-      }
-    }) as unknown as AdapterAccount,
-    unlinkAccount: (provider_providerAccountId) => prisma.account.delete({
-      where: {
-        provider_providerAccountId
-      }
-    }) as unknown as AdapterAccount,
-    getSessionAndUser: async (sessionToken) => {
-      const userSession =  await prisma.session.findUnique({
+    linkAccount: async data => {
+      console.log('Linking account with data:', data);
+
+      return prisma.$transaction(async prisma => {
+        const user = await prisma.user.findUnique({
+          where: { id: data.userId }
+        })
+        if (!user) throw new Error(`User with ID ${data.userId} does not exist`)
+        console.log('User found:', user);
+
+        const account = await prisma.account.create({
+          data: {
+            refreshToken: data.refresh_token,
+            accessToken: data.access_token,
+            provider: data.provider,
+            providerAccountId: data.providerAccountId,
+            type: data.type,
+            userId: data.userId,
+          }
+        })
+        console.log('Account linked:', account);
+        return account as unknown as AdapterAccount
+      })
+    },
+    unlinkAccount: async provider_providerAccountId => {
+      console.log('Unlinking account with provider and providerAccountId:', provider_providerAccountId);
+      const account = await prisma.account.delete({
+        where: {
+          provider_providerAccountId
+        }
+      })
+      console.log('Account unlinked:', account);
+      return account as unknown as AdapterAccount
+    },
+    getSessionAndUser: async sessionToken => {
+      console.log('Getting session and user with sessionToken:', sessionToken);
+      const userSession = await prisma.session.findUnique({
         where: { sessionToken },
         include: { user: true }
       })
       if (!userSession) return null
       const { user, ...session } = userSession
+      console.log('Session and user found:', { user, session });
       return { user, session } as unknown as { user: AdapterUser, session: AdapterSession }
     },
-    createSession: data => prisma.session.create({ data }),
-    updateSession: data => prisma.session.update({
-      where: { sessionToken: data.sessionToken },
-      data
-    }),
-    deleteSession: sessionToken => prisma.session.delete({
-      where: { sessionToken }
-    }),
+    createSession: async data => {
+      console.log('Creating session with data:', data);
+      const session = await prisma.session.create({ data })
+      console.log('Session created:', session);
+      return session
+    },
+    updateSession: async data => {
+      console.log('Updating session with data:', data);
+      const session = prisma.session.update({
+        where: { sessionToken: data.sessionToken },
+        data
+      })
+      console.log('Session updated:', session);
+      return session
+    },
+    deleteSession: async sessionToken => {
+      console.log('Deleting session with sessionToken:', sessionToken);
+      const session = await prisma.session.delete({
+        where: { sessionToken }
+      })
+      console.log('Session deleted:', session);
+      return session
+    },
   }
 }
 
@@ -114,6 +175,7 @@ const providers: Provider[] = [
     },
     userinfo: `${process.env.AUTH_OAUTH_URL_DEV}/api/user`,
     async profile(profile) {
+      console.log('Profile data received from VATSIM:', profile);
       return {
         id: profile.data.cid,
         cid: profile.data.cid,
@@ -152,7 +214,7 @@ export const authOptions: NextAuthConfig = {
     // async redirect({ baseUrl }) {
     //   return baseUrl
     // },    
-    async authorized({ auth }) { 
+    async authorized({ auth }) {
       return !!auth?.user
     },
   },
