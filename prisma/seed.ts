@@ -12,10 +12,12 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx1160000u72ujvaunxn4',
               title: 'Welcome to IDvACC',
               link: 'https://docs.google.com/presentation/d/1/view?usp=sharing',
             },
             {
+              id: 'clz6yx1160001u72uowktaiuu',
               title: 'IDvACC Training Introduction',
               link: 'https://docs.google.com/presentation/d/2/view?usp=sharing',
             }
@@ -35,22 +37,27 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx12x0002u72uuttdg3m2',
               title: 'Indonesian Airspace Introduction',
               link: 'https://docs.google.com/presentation/d/3/view?usp=sharing',
             },
             {
+              id: 'clz6yx12x0003u72u3fekozpi',
               title: 'Flight Data',
               link: 'https://docs.google.com/presentation/d/4/view?usp=sharing',
             },
             {
+              id: 'clz6yx12x0004u72ujnghwy0z',
               title: 'Radio Technique & Communications',
               link: 'https://docs.google.com/presentation/d/5/view?usp=sharing',
             },
             {
+              id: 'clz6yx12x0005u72u3pmt4atl',
               title: 'Flight Rules',
               link: 'https://docs.google.com/presentation/d/6/view?usp=sharing',
             },
             {
+              id: 'clz6yx12x0006u72uoayhwchv',
               title: 'Understanding METARs',
               link: 'https://docs.google.com/presentation/d/7/view?usp=sharing',
             }
@@ -70,14 +77,17 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx14d0007u72umk6nijx5',
               title: 'IFR Clearances',
               link: 'https://docs.google.com/presentation/d/8/view?usp=sharing',
             },
             {
+              id: 'clz6yx14d0008u72ul10hd2n7',
               title: 'Ground Surface Movement',
               link: 'https://docs.google.com/presentation/d/9/view?usp=sharing',
             },
             {
+              id: 'clz6yx14d0009u72us5s5v0i5',
               title: 'VFR Clearances',
               link: 'https://docs.google.com/presentation/d/10/view?usp=sharing',
             }
@@ -97,22 +107,27 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx16q000au72uz68llwz0',
               title: 'Tower Introduction',
               link: 'https://docs.google.com/presentation/d/11/view?usp=sharing',
             },
             {
+              id: 'clz6yx16q000bu72uyqj5yy7w',
               title: 'Initial Separation',
               link: 'https://docs.google.com/presentation/d/12/view?usp=sharing',
             },
             {
+              id: 'clz6yx16q000cu72uqf9yyfrn',
               title: 'Departures',
               link: 'https://docs.google.com/presentation/d/13/view?usp=sharing',
             },
             {
+              id: 'clz6yx16q000du72ugcpznmha',
               title: 'Arrivals',
               link: 'https://docs.google.com/presentation/d/14/view?usp=sharing',
             },
             {
+              id: 'clz6yx16q000eu72uk1t57buj',
               title: 'Tower VFR Circuit',
               link: 'https://docs.google.com/presentation/d/15/view?usp=sharing',
             }
@@ -132,10 +147,12 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx1bq000fu72utbcx8hd5',
               title: 'Introduction to Radar',
               link: 'https://docs.google.com/presentation/d/16/view?usp=sharing',
             },
             {
+              id: 'clz6yx1bq000gu72utpgrjn6g',
               title: 'Radar Procedures for Airport Operations',
               link: 'https://docs.google.com/presentation/d/17/view?usp=sharing',
             }
@@ -155,10 +172,12 @@ async function main() {
         createMany: {
           data: [
             {
+              id: 'clz6yx1di000hu72uru83c1hx',
               title: 'Indonesian Classes of Airspace',
               link: 'https://docs.google.com/presentation/d/18/view?usp=sharing',
             },
             {
+              id: 'clz6yx1di000iu72uussikkns',
               title: 'Area Control Centre: Enroute Operations',
               link: 'https://docs.google.com/presentation/d/19/view?usp=sharing',
             }
