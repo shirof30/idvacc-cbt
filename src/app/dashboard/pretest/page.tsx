@@ -17,7 +17,7 @@ const PretestPage: React.FC<PretestPageProps> = ({ searchParams }) => {
     <div>
       <h1 className="text-2xl font-semibold">{`${courses_data[courseIndex].block} - Pretest`}</h1>
       <div className='p-4 mt-5 bg-base-content rounded-3xl min-h-[60dvh]'>
-        <Pretest id={courseIndex} />
+        <Pretest id={courseIndex} questions={questions} />
       </div>
     </div>
   )
