@@ -35,18 +35,6 @@ const Courses: React.FC = async () => {
     }
   })
 
-  if (userCourses.length === 0) {
-    courses_data.forEach(async (section) => {
-      await prisma.userCourse.create({
-        data: {
-          userId: user?.id ?? "",
-          courseId: section.id,
-          completed: false
-        }
-      })
-    })
-  }
-
   return (
     <div>
       <h1 className="text-xl font-semibold">My Courses</h1>
@@ -54,7 +42,7 @@ const Courses: React.FC = async () => {
         <div className="flex flex-wrap gap-6 xl:justify-start lg:justify-center ms-auto">
           {
             courses_data.map((section: Section, idx: number) => (
-              <Link key={idx} href={`/dashboard/courses/${idx + 1}`}>
+              <Link key={idx} id={section.id} href={`/dashboard/courses/${idx + 1}`}>
                 <div className="shadow-lg image-full card bg-base-200 w-[40dvh] h-[20dvh] hover:cursor-pointer hover:before:opacity-60 transition duration-500">
                   <figure>
                     <img src={section.imgUrl} alt={section.block} />
@@ -69,8 +57,7 @@ const Courses: React.FC = async () => {
                           </div>
                         )
                         :
-                        <>
-                        </>
+                        null
                       }
                     </div>
                   </div>

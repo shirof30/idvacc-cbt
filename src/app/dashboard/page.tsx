@@ -4,7 +4,6 @@ import Servers from '@/components/servers';
 import ATCs from '@/components/atcs';
 import ATCSessions from '@/components/atc-sessions';
 import { auth } from '@auth';
-import { redirect } from 'next/navigation';
 
 const Dashboard: React.FC = async () => {
   const session = await auth();
