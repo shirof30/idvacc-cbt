@@ -159,10 +159,12 @@ const providers: Provider[] = [
     type: 'oauth',
     issuer: 'https://vatsim.net',
     clientId: process.env.AUTH_CLIENT_ID_DEV,
+    clientSecret: process.env.AUTH_CLIENT_SECRET_DEV,
     authorization: {
-      url: `${process.env.AUTH_OAUTH_URL_DEV}/oauth/authorize?response_type=code`,
+      url: `${process.env.AUTH_OAUTH_URL_DEV}/oauth/authorize`,
       params: {
         scope: 'full_name vatsim_details email',
+        response_type: 'code'
       }
     },
     token: {
