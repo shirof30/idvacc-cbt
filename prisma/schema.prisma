@@ -11,6 +11,7 @@ model VerifyCode {
   id        String   @id @default(cuid())
   cid       String   @unique
   status    String
+  courseId  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -29,12 +30,12 @@ model User {
 }
 
 model Course {
-  id        String       @id @default(cuid())
-  title     String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  sections  Section[]
-  users     UserCourse[]
+  id         String       @id @default(cuid())
+  title      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  sections   Section[]
+  users      UserCourse[]
 }
 
 model Section {
@@ -78,8 +79,8 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refreshToken      String? 
-  accessToken       String? 
+  refreshToken      String?
+  accessToken       String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
   user              User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
