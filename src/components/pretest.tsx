@@ -46,7 +46,11 @@ const Pretest: React.FC<PretestProps> = ({ id, questions, setIsTestCompleted, co
     setConfirmed(false)
     try {
       if (courseId) {
-        if (score < 7) throw new Error('Failed to submit test')
+        if (score < 7) {
+          setTestCompleted(true)
+          setLoading(false)
+          return
+        }
         const res = await axios.post('/api/submit-test', { cid: session?.user.cid, courseId: courseId, }, { headers: { 'Content-Type': 'application/json' } })
         if (res.status !== 200) throw new Error('Failed to submit test')
         if (res.data.code) setCode(res.data.code)
