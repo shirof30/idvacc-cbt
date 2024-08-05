@@ -4,7 +4,7 @@ import { auth } from "@auth";
 
 export async function POST(req: Request) {
   const body = await req.json()
-  const { cid, courseId, userId } = body
+  const { cid, courseId } = body
   const session = await auth()
 
   if (!session) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });

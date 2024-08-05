@@ -47,18 +47,22 @@ const Pretest: React.FC<PretestProps> = ({ id, questions, setIsTestCompleted, co
     try {
       if (courseId) {
         if (score < 7) {
-          setTestCompleted(true)
-          setLoading(false)
-          return
+          setTimeout(() => {
+            setTestCompleted(true)
+            setLoading(false)
+            return
+          }, 3000)
         }
-        const res = await axios.post('/api/submit-test', { cid: session?.user.cid, courseId: courseId, }, { headers: { 'Content-Type': 'application/json' } })
+        const res = await axios.post('/api/submit-test', { cid: session?.user.cid, courseId: courseId }, { headers: { 'Content-Type': 'application/json' } })
         if (res.status !== 200) throw new Error('Failed to submit test')
         if (res.data.code) setCode(res.data.code)
         setTestCompleted(true)
       } else {
         throw new Error('Course ID not found')
       }
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 3000)
     } catch (e) {
       console.error(e)
     }
