@@ -9,7 +9,7 @@ datasource db {
 
 model VerifyCode {
   id        String   @id @default(cuid())
-  cid       String   @unique
+  cid       String 
   status    String
   courseId  String
   createdAt DateTime @default(now())
