@@ -46,7 +46,7 @@ const Pretest: React.FC<PretestProps> = ({ id, questions, setIsTestCompleted, co
     setConfirmed(false)
     try {
       if (courseId) {
-        if (score < 7) {
+        if (score < 8) {
           setTimeout(() => {
             setTestCompleted(true)
             setLoading(false)
