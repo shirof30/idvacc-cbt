@@ -13,7 +13,7 @@ type LoginPageProps = {
 const LoginPage: React.FC<LoginPageProps> = async ({ searchParams }) => {
   const session = await auth();
   if (session?.user) {
-    return redirect("/dashboard");
+    return redirect("/");
   }
   
   return (

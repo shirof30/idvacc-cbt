@@ -38,17 +38,17 @@ export type SidebarNavItem = NavItemWithChildren;
 export const NavItems: NavItem[] = [
   {
     title: 'Home',
-    href: '/dashboard',
+    href: '/',
     icon: 'home',
   },
   {
     title: 'Courses',
-    href: '/dashboard/courses',
+    href: '/courses',
     icon: 'course',
   },
   {
     title: 'Statistics',
-    href: '/dashboard/statistics',
+    href: '/statistics',
     icon: 'statistic',
   },
 

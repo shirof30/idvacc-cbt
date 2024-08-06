@@ -314,8 +314,6 @@ const VerifyCode: React.FC<VerifyCodeProps> = ({ id, score, code }) => {
               </>
             )
         }
-
-        {/* <button className='btn'>Submit</button> */}
       </div>
     </div>
   )
