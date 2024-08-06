@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import DeviceWrapper from '@hooks/DeviceWrapper'
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -9,7 +10,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "IDVACC CBT SITE",
-  description: "CBT reader loaded",
+  description: "CBT Website for Indonesia vACC",
 };
 
 export default function RootLayout({
@@ -19,7 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={poppins.className}>{children}</body>
+      <body className={poppins.className}>
+        <DeviceWrapper>
+          {children}
+        </DeviceWrapper>
+      </body>
     </html>
   );
 }
