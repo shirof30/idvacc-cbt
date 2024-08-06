@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 export default async function DashboardLayout({ children }: DashboardLayoutProps) {
   const session = await auth();
   if (!session) redirect('/login');
+  
 
   const user = await prisma.user.findUnique({
     where: { cid: session?.user.cid },

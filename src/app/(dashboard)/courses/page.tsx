@@ -47,7 +47,7 @@ const Courses: React.FC = async () => {
             courses_data.map((section: Section, idx: number) => {
               const userCourse = userCourses.find(course => course.course.id === section.id);
               return (
-                <Link key={idx} id={section.id} href={`/dashboard/courses/${idx + 1}`}>
+                <Link key={idx} id={section.id} href={`/courses/${idx + 1}`}>
                   <div className="shadow-lg image-full card bg-base-200 w-[40dvh] h-[20dvh] hover:cursor-pointer hover:before:opacity-60 transition duration-500">
                     <figure>
                       <img src={section.imgUrl} alt={section.block} />
